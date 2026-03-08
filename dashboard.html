@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Vault - Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/db.js"></script>
+    <script src="js/dashboard.js" defer></script>
+</head>
+<body class="app-mode">
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"/>
+                </svg>
+                SecureVault
+            </div>
+            <div class="nav-links">
+                <span class="user-badge">Welcome, <span id="username-display">User</span></span>
+                <button id="btn-vault" class="btn-small btn-vault">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/>
+                    </svg>
+                    Secret Vault
+                </button>
+                <button class="btn-small btn-danger" onclick="logoutUser()">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+             <div class="header-action">
+                 <h2>Public Files</h2>
+                 <div style="display: flex; gap: 10px;">
+                     <button class="btn-small btn-alt" onclick="openFolderModal()">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align: middle; margin-right: 5px;">
+                            <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-1 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z"/>
+                        </svg>
+                        New Folder
+                     </button>
+                     <button class="btn-small" onclick="openUploadModal()">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align: middle; margin-right: 5px;">
+                            <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/>
+                        </svg>
+                        Upload
+                     </button>
+                 </div>
+             </div>
+
+             <div class="tabs-container" id="media-tabs">
+                 <button class="tab-btn active" data-filter="all">All Files</button>
+                 <button class="tab-btn" data-filter="image">Images</button>
+                 <button class="tab-btn" data-filter="video">Videos</button>
+                 <button class="tab-btn" data-filter="application/pdf">Documents</button>
+             </div>
+
+             <div class="folder-nav" id="folder-nav">
+                 <!-- Breadcrumbs injected here -->
+             </div>
+
+             <div id="file-grid" class="file-grid">
+                 <!-- Files injected here via JS -->
+                 <div class="empty-state">Loading files...</div>
+             </div>
+        </main>
+    </div>
+
+    <!-- Folder Modal -->
+    <div class="modal-overlay" id="folder-modal">
+        <div class="modal">
+            <h3 class="modal-title">Create New Folder</h3>
+            <div class="input-group">
+                <input type="text" id="folder-name" placeholder="Folder Name">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-small" style="flex:1" id="confirm-folder">Create</button>
+                <button class="btn-small btn-danger" style="flex:1" id="cancel-folder" onclick="document.getElementById('folder-modal').classList.remove('active')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="upload-modal">
+        <div class="modal">
+            <h3 class="modal-title">Upload Public File</h3>
+            <div class="input-group">
+                <select id="upload-folder-select">
+                    <option value="">Root Directory</option>
+                    <!-- Folders injected here -->
+                </select>
+            </div>
+            <input type="file" id="file-input" style="display:none;" accept="image/*,video/*,application/pdf">
+            <button class="btn btn-alt" onclick="document.getElementById('file-input').click()">Select File</button>
+            <div id="selected-file-name" style="margin-top: 15px; font-size: 0.85rem; color: #ccc;"></div>
+            
+            <div class="modal-actions">
+                <button class="btn-small" style="flex:1" id="confirm-upload">Upload</button>
+                <button class="btn-small btn-danger" style="flex:1" id="cancel-upload" onclick="document.getElementById('upload-modal').classList.remove('active')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vault Auth Modal -->
+    <div class="modal-overlay" id="vault-modal">
+        <div class="modal">
+            <h3 class="modal-title vault-title">Vault Authentication</h3>
+            <p style="font-size:0.85rem; color:#ccc; margin-bottom:15px;" id="vault-modal-msg">Enter your Vault PIN</p>
+            <div class="input-group">
+                <input type="password" id="vault-pin" placeholder="Enter PIN">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-small btn-vault" style="flex:1" id="confirm-vault">Enter Vault</button>
+                <button class="btn-small btn-alt" style="flex:1" id="cancel-vault">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Viewer -->
+    <div class="viewer-overlay" id="file-viewer">
+        <button class="viewer-close" onclick="closeViewer()">×</button>
+        <div id="viewer-container" class="viewer-content"></div>
+    </div>
+
+    <script>
+        function logoutUser() {
+            localStorage.removeItem('activeUser');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

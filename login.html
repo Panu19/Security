@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Vault - Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/db.js"></script>
+    <script src="js/auth.js" defer></script>
+</head>
+<body>
+    <div class="glass-panel">
+        <h1 class="title">Secure Vault</h1>
+        <div id="login-alert" class="alert"></div>
+        <form id="login-form">
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <div class="link-text">
+            Don't have an account? <a href="register.html">Register here</a>
+        </div>
+    </div>
+</body>
+</html>

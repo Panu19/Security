@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Vault - Secret Area</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/db.js"></script>
+    <script src="js/vault.js" defer></script>
+    <style>
+        /* Override specifically for the Vault */
+        body {
+            background: linear-gradient(-45deg, #1f010f, #2d0a28, #18051f, #1f010f);
+            background-size: 400% 400%;
+        }
+
+        .navbar {
+            border-bottom: 1px solid rgba(245, 87, 108, 0.3);
+        }
+
+        .vault-title-text {
+            background: linear-gradient(to right, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="app-mode">
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand vault-title-text">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                    <path
+                        d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                </svg>
+                Secret Vault
+            </div>
+            <div class="nav-links">
+                <button class="btn-small" onclick="lockVault()">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align: middle;">
+                        <path
+                            d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                    </svg>
+                    Lock & Leave
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header-action">
+                <h2 class="vault-title-text" style="font-weight: 700;">Hidden Files</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-small btn-alt" onclick="openFolderModal()">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
+                            style="vertical-align: middle; margin-right: 5px;">
+                            <path
+                                d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-1 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z" />
+                        </svg>
+                        New Folder
+                    </button>
+                    <button class="btn-small btn-vault" onclick="openUploadModal()">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
+                            style="vertical-align: middle; margin-right: 5px;">
+                            <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" />
+                        </svg>
+                        Hide File Here
+                    </button>
+                </div>
+            </div>
+
+            <div class="tabs-container" id="media-tabs">
+                <button class="tab-btn vault-tab active" data-filter="all">All Hidden</button>
+                <button class="tab-btn vault-tab" data-filter="image">Images</button>
+                <button class="tab-btn vault-tab" data-filter="video">Videos</button>
+                <button class="tab-btn vault-tab" data-filter="application/pdf">Documents</button>
+            </div>
+
+            <div class="folder-nav" id="folder-nav">
+                <!-- Breadcrumbs injected here -->
+            </div>
+
+            <div id="file-grid" class="file-grid">
+                <!-- Files injected here via JS -->
+                <div class="empty-state">Loading hidden files...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Folder Modal -->
+    <div class="modal-overlay" id="folder-modal">
+        <div class="modal">
+            <h3 class="modal-title vault-title">Create Hidden Folder</h3>
+            <div class="input-group">
+                <input type="text" id="folder-name" placeholder="Folder Name">
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-small btn-vault" style="flex:1" id="confirm-folder">Create</button>
+                <button class="btn-small btn-danger" style="flex:1" id="cancel-folder" onclick="document.getElementById('folder-modal').classList.remove('active')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="upload-modal">
+        <div class="modal">
+            <h3 class="modal-title vault-title">Hide File</h3>
+            <p style="font-size:0.85rem; color:#ccc; margin-bottom:15px;">Files uploaded here will not appear on the
+                main dashboard.</p>
+            <div class="input-group">
+                <select id="upload-folder-select">
+                    <option value="">Root Vault Directory</option>
+                    <!-- Folders injected here -->
+                </select>
+            </div>
+            <input type="file" id="file-input" style="display:none;" accept="image/*,video/*,application/pdf">
+            <button class="btn btn-alt" onclick="document.getElementById('file-input').click()">Select File to
+                Hide</button>
+            <div id="selected-file-name" style="margin-top: 15px; font-size: 0.85rem; color: #ccc;"></div>
+
+            <div class="modal-actions">
+                <button class="btn-small btn-vault" style="flex:1" id="confirm-upload">Hide File</button>
+                <button class="btn-small btn-danger" style="flex:1" id="cancel-upload" onclick="document.getElementById('upload-modal').classList.remove('active')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Viewer -->
+    <div class="viewer-overlay" id="file-viewer">
+        <button class="viewer-close" onclick="closeViewer()">×</button>
+        <div id="viewer-container" class="viewer-content"></div>
+    </div>
+
+    <script>
+        function lockVault() {
+            sessionStorage.removeItem('vaultUnlocked');
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+
+</html>
