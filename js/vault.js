@@ -9,6 +9,17 @@ if (vaultUnlocked !== 'true') {
     window.location.href = 'dashboard.html';
 }
 
+window.logoutUser = function() {
+    localStorage.removeItem('activeUser');
+    sessionStorage.removeItem('vaultUnlocked');
+    window.location.href = 'login.html';
+};
+
+window.lockVault = function() {
+    sessionStorage.removeItem('vaultUnlocked');
+    window.location.href = 'dashboard.html';
+};
+
 let vaultFiles = [];
 let vaultFolders = [];
 let currentFolderId = null;
@@ -315,11 +326,16 @@ window.viewFile = function(url, mimeType) {
     container.innerHTML = '';
     
     if (mimeType.startsWith('image/')) {
-        container.innerHTML = `<img src="${url}" style="max-width:100%; max-height:100%;">`;
+        container.innerHTML = `<img src="${url}" style="max-width:100%; max-height:100%; object-fit: contain;">`;
     } else if (mimeType.startsWith('video/')) {
-        container.innerHTML = `<video src="${url}" controls autoplay style="max-width:100%; max-height:100%;"></video>`;
+        container.innerHTML = `<video src="${url}" controls autoplay playsinline style="max-width:100%; max-height:100%; object-fit: contain;"></video>`;
     } else if (mimeType === 'application/pdf') {
-        container.innerHTML = `<iframe src="${url}" style="width:80vw; height:80vh; border:none; background:#fff;"></iframe>`;
+        container.innerHTML = `
+            <iframe src="${url}" style="width:80vw; height:70vh; border:none; background:#fff; display:block;"></iframe>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="${url}" download="document.pdf" class="btn" style="text-decoration: none; display: inline-block;">Download / Open Mobile PDF</a>
+            </div>
+        `;
     } else {
         alert("Preview not supported for this file type.");
         return;

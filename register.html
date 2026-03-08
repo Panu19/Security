@@ -14,7 +14,11 @@
         <div id="register-alert" class="alert"></div>
         <form id="register-form">
             <div class="input-group">
-                <input type="text" id="reg-username" placeholder="Choose Username" required autocomplete="off">
+                <input type="email" id="reg-username" placeholder="Gmail Address (@gmail.com)" required autocomplete="off" pattern=".+@gmail\.com$">
+            </div>
+            <div class="input-group" style="text-align: left; margin-bottom: 20px;">
+                <label style="color: rgba(255,255,255,0.7); font-size: 0.85rem; display: block; margin-bottom: 5px;">Security Question: What was the name of your first pet?</label>
+                <input type="text" id="reg-security" placeholder="Security Answer" required autocomplete="off">
             </div>
             <div class="input-group">
                 <input type="password" id="reg-password" placeholder="Choose Password" required>

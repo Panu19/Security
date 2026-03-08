@@ -8,23 +8,51 @@
     <script src="js/db.js"></script>
     <script src="js/auth.js" defer></script>
 </head>
-<body>
-    <div class="glass-panel">
+    <div class="glass-panel" id="main-panel">
         <h1 class="title">Secure Vault</h1>
-        <div id="login-alert" class="alert"></div>
-        <form id="login-form">
-            <div class="input-group">
-                <input type="text" id="username" placeholder="Username" required autocomplete="off">
+        
+        <!-- Login Form -->
+        <div id="login-section">
+            <div id="login-alert" class="alert"></div>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Gmail Address (@gmail.com)" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <div class="link-text" style="margin-top: 15px;">
+                <a href="#" id="show-reset-btn" style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Forgot Password?</a>
             </div>
-            <div class="input-group">
-                <input type="password" id="password" placeholder="Password" required>
+            <div class="link-text">
+                Don't have an account? <a href="register.html">Register here</a>
             </div>
-            <button type="submit" class="btn">Login</button>
-        </form>
-        <div class="link-text">
-            Don't have an account? <a href="register.html">Register here</a>
         </div>
 
+        <!-- Reset Password Form -->
+        <div id="reset-section" style="display: none;">
+            <p style="color: white; margin-bottom: 15px; font-size: 0.9rem;">Reset your password using your security answer.</p>
+            <div id="reset-alert" class="alert"></div>
+            <form id="reset-form">
+                <div class="input-group">
+                    <input type="email" id="reset-username" placeholder="Gmail Address (@gmail.com)" required autocomplete="off">
+                </div>
+                <div class="input-group" style="text-align: left; margin-bottom: 20px;">
+                    <label style="color: rgba(255,255,255,0.7); font-size: 0.85rem; display: block; margin-bottom: 5px;">Security Question: What was the name of your first pet?</label>
+                    <input type="text" id="reset-security" placeholder="Security Answer" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reset-password-new" placeholder="New Password" required>
+                </div>
+                <button type="submit" class="btn" style="background: linear-gradient(45deg, #00b09b, #96c93d);">Reset Password</button>
+            </form>
+            <div class="link-text" style="margin-top: 15px;">
+                <a href="#" id="cancel-reset-btn">Cancel</a>
+            </div>
+        </div>
+        
     </div>
 </body>
 </html>

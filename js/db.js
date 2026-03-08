@@ -49,12 +49,12 @@ class VaultDatabase {
         });
     }
 
-    async addUser(username, password) {
+    async addUser(username, password, securityAnswer = '') {
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(['users'], 'readwrite');
             const store = transaction.objectStore('users');
             
-            const request = store.add({ username, password, vaultPassword: null });
+            const request = store.add({ username, password, securityAnswer, vaultPassword: null });
             
             request.onsuccess = () => resolve(true);
             request.onerror = () => reject('Username already exists');
@@ -78,6 +78,23 @@ class VaultDatabase {
         if (!user) throw new Error('User not found');
         
         user.vaultPassword = vaultPassword;
+        
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['users'], 'readwrite');
+            const store = transaction.objectStore('users');
+            
+            const request = store.put(user);
+            
+            request.onsuccess = () => resolve();
+            request.onerror = (e) => reject(e.target.error);
+        });
+    }
+
+    async updatePassword(username, newPassword) {
+        const user = await this.getUser(username);
+        if (!user) throw new Error('User not found');
+        
+        user.password = newPassword;
         
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction(['users'], 'readwrite');
