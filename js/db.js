@@ -185,6 +185,31 @@ class VaultDatabase {
             request.onerror = (e) => reject(e.target.error);
         });
     }
+
+    // Admin user logic
+    async getAllUsers() {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['users'], 'readonly');
+            const store = transaction.objectStore('users');
+            
+            const request = store.getAll();
+            
+            request.onsuccess = (e) => resolve(e.target.result || []);
+            request.onerror = (e) => reject(e.target.error);
+        });
+    }
+
+    async deleteUser(username) {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['users'], 'readwrite');
+            const store = transaction.objectStore('users');
+            
+            const request = store.delete(username);
+            
+            request.onsuccess = () => resolve();
+            request.onerror = (e) => reject(e.target.error);
+        });
+    }
 }
 
 window.dbLayer = new VaultDatabase();

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Vault - Admin Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="glass-panel">
+        <div class="nav-brand" style="justify-content: center; margin-bottom: 30px; background: none; -webkit-text-fill-color: initial; -webkit-background-clip: initial; background-clip: initial;">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="url(#adminGrad)">
+                <defs>
+                    <linearGradient id="adminGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ffb347" />
+                        <stop offset="100%" stop-color="#ff7b00" />
+                    </linearGradient>
+                </defs>
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+            </svg>
+            <span style="font-size: 2rem; background: linear-gradient(to right, #ffb347, #ff7b00); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Admin Portal</span>
+        </div>
+        
+        <div id="admin-login-alert" class="alert"></div>
+        
+        <!-- Login Form (Visible if password exists) -->
+        <form id="admin-login-form" style="display: none;">
+            <div class="input-group">
+                <input type="password" id="admin-password" placeholder="Admin Password" required>
+            </div>
+            <button type="submit" class="btn" style="background: linear-gradient(45deg, #ffb347, #ff7b00); box-shadow: 0 10px 20px rgba(255, 123, 0, 0.3);">Access Control Center</button>
+        </form>
+
+        <!-- Setup Form (Visible on First Run) -->
+        <form id="admin-setup-form" style="display: none;">
+            <p style="text-align: center; margin-bottom: 20px; font-size: 0.95rem; color: rgba(255,255,255,0.8);">
+                Welcome Administration! Please set your master password for the control center.
+            </p>
+            <div class="input-group">
+                <input type="password" id="new-admin-password" placeholder="New Admin Password" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="confirm-admin-password" placeholder="Confirm Password" required>
+            </div>
+            <button type="submit" class="btn" style="background: linear-gradient(45deg, #00b09b, #96c93d); box-shadow: 0 10px 20px rgba(0, 176, 155, 0.3);">Set Admin Password</button>
+        </form>
+        
+        <div class="link-text" style="margin-top: 25px;">
+            <a href="login.html" style="color: rgba(255,255,255,0.6);">← Return to standard login</a>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('admin-login-form');
+        const setupForm = document.getElementById('admin-setup-form');
+        const alertEl = document.getElementById('admin-login-alert');
+        
+        // Check state on load
+        if (localStorage.getItem('adminSysPassword')) {
+            loginForm.style.display = 'block';
+        } else {
+            setupForm.style.display = 'block';
+        }
+
+        // Login Handler
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('admin-password').value;
+            const storedPass = localStorage.getItem('adminSysPassword');
+
+            if (pass === storedPass) {
+                localStorage.setItem('isAdmin', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                alertEl.textContent = 'Invalid Admin credentials';
+                alertEl.className = 'alert error';
+                alertEl.style.display = 'block';
+                setTimeout(() => { alertEl.style.display = 'none'; }, 3000);
+            }
+        });
+
+        // Setup Handler
+        setupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pass1 = document.getElementById('new-admin-password').value;
+            const pass2 = document.getElementById('confirm-admin-password').value;
+
+            if (pass1 !== pass2) {
+                alertEl.textContent = 'Passwords do not match';
+                alertEl.className = 'alert error';
+                alertEl.style.display = 'block';
+                setTimeout(() => { alertEl.style.display = 'none'; }, 3000);
+                return;
+            }
+
+            if (pass1.length < 5) {
+                alertEl.textContent = 'Password must be at least 5 characters';
+                alertEl.className = 'alert error';
+                alertEl.style.display = 'block';
+                setTimeout(() => { alertEl.style.display = 'none'; }, 3000);
+                return;
+            }
+
+            // Save and grant access
+            localStorage.setItem('adminSysPassword', pass1);
+            localStorage.setItem('isAdmin', 'true');
+            
+            alertEl.textContent = 'Admin Password Set! Redirecting...';
+            alertEl.className = 'alert success';
+            alertEl.style.display = 'block';
+            
+            setTimeout(() => {
+                window.location.href = 'admin.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
