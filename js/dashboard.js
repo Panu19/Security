@@ -375,7 +375,7 @@ window.viewFile = function(url, mimeType) {
         container.innerHTML = `
             <iframe src="${url}" style="width:80vw; height:70vh; border:none; background:#fff; display:block;"></iframe>
             <div style="text-align: center; margin-top: 15px;">
-                <a href="${url}" download="document.pdf" class="btn" style="text-decoration: none; display: inline-block;">Download / Open Mobile PDF</a>
+                <button onclick="window.open('${url}', '_blank')" class="btn" style="text-decoration: none; display: inline-block; cursor: pointer;">Download / Open Mobile PDF</button>
             </div>
         `;
     } else {
